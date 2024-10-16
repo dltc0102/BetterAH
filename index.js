@@ -273,7 +273,7 @@ register('chat', (coins, event) => {
 }).setCriteria("You collected ${coins} coins back from an auction which you didn't hold the top bid!");
 
 //! refund from escrow for shens
-register('chat', (event) => {
+register('chat', (coins, event) => {
     if (!getInSkyblock()) return;
     if (ahDebug) ChatLib.chat('refund from special auction');
     replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &7Collected &6${truncateNumbers(coins)} &7from failed shen's bid!`);  
