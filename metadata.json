@@ -1,0 +1,9 @@
+{
+    "name": "BetterAH",
+    "description": "makes auction house messages more compact",
+    "version": "1.0.3",
+    "author": "oBiscuit",
+    "entry": "index.js",
+    "requires": ["PogObject"]
+}
+
