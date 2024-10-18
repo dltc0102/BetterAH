@@ -14,3 +14,6 @@
 # v1.0.3
 + added firstInstall
 + changed gameload message
++ added error "this auction couldn't be found!"
++ WIP: refactored and reformatted claim auction messages
++ WIP: refactored and reformatted claim expired auction messages

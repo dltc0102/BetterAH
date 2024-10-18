@@ -71,10 +71,11 @@ auctionHouseMessages.forEach(msg => {
 });
 
 //! auction house error messages
-const auctionHouseErrors = [
+const auctionHouseErrors = [    
     "Couldn't read this number!",
     "Minimum duration is 5 minutes!",
     "You already have the highest bid on this auction!",
+    "This auction wasn't found!",
 ];
 
 auctionHouseErrors.forEach(error => {
@@ -97,7 +98,7 @@ register('chat', (playerInfo, item, cost, event) => {
     let auctionClickable = createClickable(auctionBoughtMessage, auctionLink);
     replaceAuctionMessage(event, auctionClickable, bypass=true);
     if (ahData.sounds) ahAudio.playDingSound();    
-}).setCriteria('[Auction] ${playerInfo} bought ${item} for ${cost} coins CLICK');
+}).setCriteria('[Auction] ${playerInfo} bought ${item} for ${cost} coins CLICK');               
 
 //! created a normal auction --  
 register('chat', (player, item, event) => {                     
@@ -174,7 +175,6 @@ const claimObject = {
     'collector': '',
     'itemName': '',
     'cost': '',
-    'recipient': '',
 };
 register('chat', (cost, item, recipient, event) => {
     if (!getInSkyblock()) return;
@@ -182,54 +182,21 @@ register('chat', (cost, item, recipient, event) => {
     if (ahDebug) ChatLib.chat('you collection coins from selling response');
     const regex = /&r&eYou collected &r&6(.+) coins &r&efrom selling &r&f&r(.+) &r&eto &r(&[a-qs-z0-9])(.+) &r&ein an auction!&r/;
     let match = message.match(regex);
-    if (match) {
-        let [_, itemCost, formattedItemName, receiverColor, receiverName] = match;
-        claimObject.recipient = `${receiverColor}${stripRank(receiverName.removeFormatting())}`;
-        claimObject.itemName = formattedItemName;
-
-        //* youfirst is true
-        if (!claimObject.youFirst && claimObject.collector === '') {
-            claimObject.youFirst = true;
-            claimObject.cost = `&6${truncateNumbers(itemCost)}`;    
-            cancel(event);
-
-        //* youfirst is false
-        } else if (!claimObject.youFirst && claimObject.collector !== '') { 
-            cancel(event);          
-            ChatLib.chat(`${AH_PREFIX}&6SOLD: ${claimObject.itemName} &7collected by ${claimObject.collector} &7for ${claimObject.cost}!`);
-            claimObject.youFirst = false;
-            claimObject.recipient = '';
-            claimObject.collector = '';
-            claimObject.itemName = '';
-            claimObject.cost = '';
-        }
-    }
+    // if (match) {
+        
+    // }
 }).setCriteria('You collected ${cost} coins from selling ${item} to ${recipient} in an auction!');
 
 register('chat', (collector, coins, event) => {
     if (!getInSkyblock()) return;
+    if (collector === 'You') return;
     if (ahDebug) ChatLib.chat('player collected coins from selling response');
     const message = ChatLib.getChatMessage(event, true);
     const regex = /(&[a-qs-z0-9])(.+?) &r&ecollected an auction for &r&6(.+) coins&r&e\!&r/;
     let match = message.match(regex);
-    if (match) {    
-        let [_, collectorColor, collectorName, formattedCost] = match;
-        claimObject.collector = `${collectorColor}${stripRank(collectorName.removeFormatting())}`;
-        
-        if (claimObject.youFirst && claimObject.recipient !== '') {
-            cancel(event);
-            ChatLib.chat(`${AH_PREFIX}&6SOLD: ${claimObject.itemName} &7collected by ${claimObject.collector} &7for ${claimObject.cost}!`);   
-            claimObject.youFirst = false;
-            claimObject.recipient = '';
-            claimObject.collector = '';
-            claimObject.itemName = '';
-            claimObject.cost = '';
-
-        } else if (!claimObject.youFirst && claimObject.recipient === '') {
-            claimObject.cost = `&6${truncateNumbers(formattedCost)}`;
-            cancel(event);
-        }
-    }
+    // if (match) {    
+            
+    // }        
 }).setCriteria('${collector} collected an auction for ${coins}');
 
 //! Bid message on your item
@@ -255,7 +222,7 @@ register('chat', (bidAmount, bidItem, event) => {
 
 //! outbid message  
 register('chat', (player, diffCoins, item, event) => {
-    if (!getInSkyblock()) return;
+    if (!getInSkyblock()) return;   
     if (ahDebug) ChatLib.chat('player outbid you for item response');
     let auctionLink = getAuctionLinkFromEvent(event);        
     const message = ChatLib.getChatMessage(event, true);

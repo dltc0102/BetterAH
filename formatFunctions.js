@@ -4,13 +4,14 @@ function generateMessage(prefix, message, regex, formatHandler) {
     const match = message.match(regex);
     if (match) {
         return formatHandler(prefix, match);    
-    } else {        
+    } else {    
+        console.log('not matched -- ah');    
         console.log(`matched: false`);
         console.log(`formatHandler: ${formatHandler}`);
         console.log(`message: ${message}`);
         console.log(`regex: ${regex}`);
         console.log(' ');
-        return 'not matched -- ah';
+        return;
     }
 }
 

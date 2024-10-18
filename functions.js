@@ -91,3 +91,23 @@ export function getAuctionLinkFromEvent(event) {
     let auctionLink = messageParts[0].clickValue;
     return auctionLink;
 }
+
+register('command', () => {
+    //* you first
+    console.log('&8you first')
+    ChatLib.simulateChat('&r&eYou collected &r&6400,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
+    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6400,000 coins&r&e!&r')
+
+    //* player first  
+    console.log('&8player first')
+    ChatLib.simulateChat('&b[MVP&r&c+&r&b] Domapy &r&f &r&ecollected an auction for &r&6600,000 coins&r&e!&r')
+    ChatLib.simulateChat('&r&eYou collected &r&6600,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')   
+    
+    //* player only     
+    console.log('&8player only')
+    ChatLib.simulateChat('&b[MVP&r&5++&r&b] Dompay&r&f &r&ecollected an auction for &r&61,970,100 coins&r&e!&r')
+
+    //* You only
+    console.log('&8You only')
+    ChatLib.simulateChat('&r&eYou collected &r&61,000,000 coins &r&efrom selling &r&f&r&5Hyperion &r&eto &r&b[MVP&r&9+&r&b] Nquek &r&ein an auction!&r')
+}).setName('ahclaimtest');          
