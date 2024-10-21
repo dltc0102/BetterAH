@@ -1,4 +1,5 @@
 import { stripRank, getInSkyblock, truncateNumbers } from "./functions"
+import { getAuctionResponse } from './formatFunctions';
 
 function getAhMessageInfo(msg) {
     let msgType = msg.includes('You collected') ? "personal" : "coop";
@@ -54,13 +55,13 @@ register('chat', (cost, item, recipient, event) => {
     const message = ChatLib.getChatMessage(event, true);
     storedClaimedMessages.push(message);
     cancel(event);   
-
+    
     if (storedClaimedMessages.length < 2) return;   
     const [msg1, msg2] = storedClaimedMessages;
     const claimedMessageObject = attemptAhMessageMatch(msg1, msg2);          
-    ChatLib.chat(`${AH_PREFIX}&r${claimedMessageObject.collector} &6CLAIMED: ${claimedMessageObject.item} &7for &6${claimedMessageObject.cost} &7to ${claimedMessageObject.buyer}`)
+    ChatLib.chat(`${AH_PREFIX}&r${claimedMessageObject.collector ?? ''} &6CLAIMED: ${claimedMessageObject.item} &7for &6${claimedMessageObject.cost} &7to ${claimedMessageObject.buyer}`)
     storedClaimedMessages = [];
-}).setCriteria('You collected ${cost} coins from selling ${item} to ${recipient} in an auction!');
+}).setCriteria('You collected ${cost} coins from selling ${item} to ${recipient} in an auction!');  
 
 register('chat', (collector, coins, event) => {
     if (!getInSkyblock()) return;
@@ -68,11 +69,11 @@ register('chat', (collector, coins, event) => {
     const message = ChatLib.getChatMessage(event, true);
     storedClaimedMessages.push(message);
     cancel(event);      
-    
+            
     if (storedClaimedMessages.length < 2) return;   
     const [msg1, msg2] = storedClaimedMessages;
     const claimedMessageObject = attemptAhMessageMatch(msg1, msg2);
-    ChatLib.chat(`${AH_PREFIX}&r${claimedMessageObject.collector} &6CLAIMED: ${claimedMessageObject.item} &7for &6${claimedMessageObject.cost} &7to ${claimedMessageObject.buyer}`)
+    ChatLib.chat(`${AH_PREFIX}&r${claimedMessageObject.collector ?? ''} &6CLAIMED: ${claimedMessageObject.item} &7for &6${claimedMessageObject.cost} &7to ${claimedMessageObject.buyer}`)
     storedClaimedMessages = [];
 }).setCriteria('${collector} collected an auction for ${coins}');
 
@@ -120,10 +121,16 @@ register('chat', (item, event) => {
     storedExpiredMessages.push(message);
     cancel(event);   
     
-    if (storedExpiredMessages.length < 2) return;
-    const [msg1, msg2] = storedExpiredMessages;
-    const claimedExpiredObject = attemptAhExpiredMessageMatch(msg1, msg2);
-    ChatLib.chat(`${AH_PREFIX}&6CLAIMED &cEXPIRED: &r${claimedExpiredObject.item} &7by ${claimedExpiredObject.collector}`);
+    if (storedExpiredMessages.length < 2) {
+        const message = ChatLib.getChatMessage(event, true);
+        let expiredItem = getAuctionResponse(AH_PREFIX, message, 'youExpiredAuction');
+        ChatLib.chat(`${AH_PREFIX}CLAIMED &cEXPIRED: ${expiredItem}&7!`);
+
+    } else {
+        const [msg1, msg2] = storedExpiredMessages;
+        const claimedExpiredObject = attemptAhExpiredMessageMatch(msg1, msg2);
+        ChatLib.chat(`${AH_PREFIX}&6CLAIMED &cEXPIRED: &r${claimedExpiredObject.item} &7by ${claimedExpiredObject.collector}`);
+    }
     storedExpiredMessages = [];
 }).setCriteria('You claimed ${item} back from your expired auction!');
 
@@ -134,9 +141,15 @@ register('chat', (collector, event) => {
     storedExpiredMessages.push(message);
     cancel(event);
 
-    if (storedExpiredMessages.length < 2) return;
-    const [msg1, msg2] = storedExpiredMessages;
-    const claimedExpiredObject = attemptAhExpiredMessageMatch(msg1, msg2);
-    ChatLib.chat(`${AH_PREFIX}&6CLAIMED &cEXPIRED: &r${claimedExpiredObject.item} &7by ${claimedExpiredObject.collector}`);
-    storedExpiredMessages = [];
+    if (storedExpiredMessages.length < 2) {
+        const message = ChatLib.getChatMessage(event, true);
+        let collectorName = getAuctionResponse(AH_PREFIX, message, 'playerExpiredAuction');   
+        ChatLib.chat(`${AH_PREFIX}CLAIMED &cEXPIRED &7by ${collectorName}&7!`);
+
+    } else {
+        const [msg1, msg2] = storedExpiredMessages;
+        const claimedExpiredObject = attemptAhExpiredMessageMatch(msg1, msg2);
+        ChatLib.chat(`${AH_PREFIX}&6CLAIMED &cEXPIRED: &r${claimedExpiredObject.item} &7by ${claimedExpiredObject.collector}`);
+    }
+    storedExpiredMessages = [];     
 }).setCriteria('${collector} collected an expired auction!');

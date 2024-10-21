@@ -1,8 +1,8 @@
-import { getInSkyblock, replaceAuctionMessage, truncateNumbers, createClickable, stripRank, getAuctionLinkFromEvent } from './functions.js';
+import { getInSkyblock, getInHub, replaceAuctionMessage, truncateNumbers, createClickable, stripRank, getAuctionLinkFromEvent } from './functions.js';
 import { getAuctionResponse } from './formatFunctions.js';
 import Audio from './audio.js'; 
 import PogObject from '../PogData';
-import './test.js'
+import './queueMessages.js'
     
 const ahAudio = new Audio();
 const AH_PREFIX = '&6[AH] ';  
@@ -132,46 +132,40 @@ register('chat', (player, item, event) => {
 }).setCriteria('${player} cancelled an auction for ${item}!');
 
 //! buying an auction
+const hubObject = {
+    item: '',
+    cost: '',
+    seller: '',
+};
 register('chat', (item, cost, event) => {
     if (!getInSkyblock()) return;
     if (ahDebug) ChatLib.chat('player purchasing item response');
     const message = ChatLib.getChatMessage(event, true);
     let boughtMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBought');
-    replaceAuctionMessage(event, boughtMessage);
+    if (getInHub()) {   
+        hubObject.item = boughtMessage.item;
+        hubObject.cost = boughtMessage.cost;
+        cancel(event);
+
+    } else {
+        replaceAuctionMessage(event, `${AH_PREFIX}BOUGHT: ${boughtMessage.item} &7for &6${boughtMessage.cost}&7!`);
+    }
 }).setCriteria('You purchased ${item} for ${cost} coins!');
-
-//! claiming an expired auction
-//* you claimed expired
-let expiredItem = '';
-register('chat', (item, event) => {
-    if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('you claimed expired auction response');
-    const message = ChatLib.getChatMessage(event, true);
-    expiredItem = getAuctionResponse(AH_PREFIX, message, 'youExpiredAuction');
-    cancel(event);
-}).setCriteria('You claimed ${item} back from your expired auction!');
-
-//* player claimed expired
-register('chat', (player, event) => {
-    if (!getInSkyblock()) return;
-    if (expiredItem === '') return;
-    if (ahDebug) ChatLib.chat('player claimed expired auction response');
-    const message = ChatLib.getChatMessage(event, true);
-    let [collectorColor, collectorName] = getAuctionResponse(AH_PREFIX, message, 'playerExpiredAuction');   
-    let expiredMessage = `${AH_PREFIX}&cEXPIRED: ${expiredItem} &7by ${collectorColor}${collectorName}&7!`;
-    replaceAuctionMessage(event, expiredMessage);
-}).setCriteria('${player} collected an expired auction!');
 
 //! claiming a bought item          
 register('chat', (item, seller, event) => {
     if (!getInSkyblock()) return;
     if (ahDebug) ChatLib.chat('you claimed item reponse');
     const message = ChatLib.getChatMessage(event, true);
-    let claimedMessage = getAuctionResponse(AH_PREFIX, message, 'claimBought');
-    replaceAuctionMessage(event, claimedMessage);
-}).setCriteria("You claimed ${item} from ${seller}'s auction!");
+    let claimedObject = getAuctionResponse(AH_PREFIX, message, 'claimBought');
+    if (getInHub() && hubObject.item === claimedObject.item) {
+        hubObject.seller = claimedObject.seller;
+        replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED: ${hubObject.item} &7for &6${hubObject.cost} &7from ${hubObject.seller}&7!`);
 
-//! claimed auction 2 ways (cuz hypixel dumb)
+    } else {
+        replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED: ${claimedObject.item} &7from ${claimedObject.seller}&7!`);
+    }
+}).setCriteria("You claimed ${item} from ${seller}'s auction!");
 
 //! Bid message on your item
 register('chat', (player, cost, item, event) => {
@@ -231,5 +225,5 @@ register('chat', (event) => {
 register('chat', (coins, event) => {
     if (!getInSkyblock()) return;
     if (ahDebug) ChatLib.chat('auction escrow response');
-        replaceAuctionMessage(event, `${AH_PREFIX}&6REFUND: &r&6${truncateNumbers(coins)} &7from &eEscrow!`);
+        replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &r&6${truncateNumbers(coins)} &7from &eEscrow!`);
 }).setCriteria('Escrow refunded ${coins} coins for BIN Auction Buy!');

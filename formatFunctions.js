@@ -38,7 +38,7 @@ export function getAuctionResponse(prefix, message, type) {
             format: formatCancelledAuction
         },
         auctionBought: {
-            regex: /&r&eYou purchased &r&f&r(.+) &r&efor &r&6(.+) coins&r&e\!&r/,
+            regex: /&r&eYou purchased &r&f&r&f&r(.+) &r&efor &r&6(.+) coins&r&e\!&r/,
             format: formatBoughtAuction
         },
         claimBought: {
@@ -88,12 +88,18 @@ function formatBINCreated(prefix, match) {
 
 function formatBoughtAuction(prefix, match) {
     let [_, formattedItemName, itemCost] = match;
-    return `${prefix}BOUGHT: ${formattedItemName} &7for &6${truncateNumbers(itemCost)}&7!`;
+    return {
+        item: formattedItemName,
+        cost: truncateNumbers(itemCost)
+    };
 }
 
 function formatClaimedBought(prefix, match) {
     let [_, formattedItemName, sellerColor, sellerName] = match;
-    return `${prefix}CLAIMED: ${formattedItemName} &7from ${sellerColor}${stripRank(sellerName.removeFormatting())}&7!`;
+    return {
+        item: formattedItemName,
+        seller: `${sellerColor}${stripRank(sellerName.removeFormatting())}`
+    };
 }           
 
 function getExpiredAuctionItem(prefix, match) {
@@ -104,7 +110,7 @@ function getExpiredAuctionItem(prefix, match) {
 function getExpiredCollector(prefix, match) {
     let [_, collectorColor, collectorName] = match;
     let name = stripRank(collectorName.removeFormatting()).trim();
-    return [collectorColor, name];
+    return `${collectorColor}${name}`;
 }
 
 function formatCancelledAuction(prefix, match) {
