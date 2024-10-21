@@ -14,13 +14,12 @@ export function abbreviateWords(name) {
     return newName.removeFormatting();
 }
 
-export function truncateNumbers(amt) { 
-    if (['K', 'M', 'B', 'coin', 'coins'].some(substring => amt.toString().includes(substring))) return;
+export function truncateNumbers(amt) {  
     const cost = Number(amt.toString().replace(/,/g, ''));
     const formatNumber = (num) => {
         const fixedNum = num.toFixed(2);
         return fixedNum.endsWith('.00') ? num.toFixed(0) : fixedNum;
-    };
+    };  
 
     switch (true) {
         case cost >= 1_000_000_000_000:
@@ -96,27 +95,29 @@ export function getAuctionLinkFromEvent(event) {
 
 register('command', () => {
     //* you first
-    ChatLib.simulateChat('&r&eYou collected &r&6400,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
-    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6400,000 coins&r&e!&r')
+    // ChatLib.simulateChat('&r&eYou collected &r&6400,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
+    // ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6400,000 coins&r&e!&r')
 
     //* player first  
-    ChatLib.simulateChat('&b[MVP&r&c+&r&b] Domapy &r&f &r&ecollected an auction for &r&6600,000 coins&r&e!&r')
-    ChatLib.simulateChat('&r&eYou collected &r&6600,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')   
+    // ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6600,000 coins&r&e!&r')
+    // ChatLib.simulateChat('&r&eYou collected &r&6600,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
     
-    //* player only     
+    //* player only         
     // ChatLib.simulateChat('&b[MVP&r&5++&r&b] Dompay&r&f &r&ecollected an auction for &r&61,970,100 coins&r&e!&r')
 
-    //* You only
-    // ChatLib.simulateChat('&r&eYou collected &r&61,000,000 coins &r&efrom selling &r&f&r&5Hyperion &r&eto &r&b[MVP&r&9+&r&b] Nquek &r&ein an auction!&r')
-
     //* bulk test
-    ChatLib.simulateChat('&r&eYou collected &r&6258,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
-    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6258,000 coins&r&e!&r')
-    ChatLib.simulateChat('&b[MVP&r&c+&r&b] Domapy &r&f &r&ecollected an auction for &r&61,240,000 coins&r&e!&r')
-    ChatLib.simulateChat('&r&eYou collected &r&61,240,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')   
-}).setName('ahclaimtest');  
+    // ChatLib.simulateChat('&r&eYou collected &r&6258,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
+    // ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6258,000 coins&r&e!&r')
+    // ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6470,000 coins&r&e!&r')
+    // ChatLib.simulateChat('&r&eYou collected &r&6470,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
+}).setName('ahclaimtest');                          
 
 register('command', () => {
     ChatLib.simulateChat('&r&eYou claimed &r&f&r&9Glowstone Gauntlet &r&eback from your expired auction!&r')
     ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an expired auction!&r')
 }).setName('expired');                              
+
+register('command', () => {
+    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&63,613,500 coins&r&e!&r')
+    ChatLib.simulateChat('&r&eYou collected &r&63,613,500 coins &r&efrom selling &r&f&r&7[Lvl 1] &r&6Zombie &r&eto &r&b[MVP&r&6+&r&b] Airz200 &r&ein an auction!&r')
+}).setName('testzombie');           
