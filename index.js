@@ -2,7 +2,8 @@ import { getInSkyblock, replaceAuctionMessage, truncateNumbers, createClickable,
 import { getAuctionResponse } from './formatFunctions.js';
 import Audio from './audio.js'; 
 import PogObject from '../PogData';
-
+import './test.js'
+    
 const ahAudio = new Audio();
 const AH_PREFIX = '&6[AH] ';  
 let moduleVersion = JSON.parse(FileLib.read("BetterAH", "metadata.json")).version;  
@@ -61,6 +62,7 @@ const auctionHouseMessages = [
     /Placing your bid\.\.\./,
     /You canceled your auction for .+!/,
     /Checking escrow for recent transaction\.\.\./,
+    /There was an error with the auction house! \(AUCTION_EXPIRED_OR_NOT_FOUND\)/,
 ];
 
 auctionHouseMessages.forEach(msg => {
@@ -170,34 +172,6 @@ register('chat', (item, seller, event) => {
 }).setCriteria("You claimed ${item} from ${seller}'s auction!");
 
 //! claimed auction 2 ways (cuz hypixel dumb)
-const claimObject = {
-    'youFirst': false,
-    'collector': '',
-    'itemName': '',
-    'cost': '',
-};
-register('chat', (cost, item, recipient, event) => {
-    if (!getInSkyblock()) return;
-    const message = ChatLib.getChatMessage(event, true);
-    if (ahDebug) ChatLib.chat('you collection coins from selling response');
-    const regex = /&r&eYou collected &r&6(.+) coins &r&efrom selling &r&f&r(.+) &r&eto &r(&[a-qs-z0-9])(.+) &r&ein an auction!&r/;
-    let match = message.match(regex);
-    // if (match) {
-        
-    // }
-}).setCriteria('You collected ${cost} coins from selling ${item} to ${recipient} in an auction!');
-
-register('chat', (collector, coins, event) => {
-    if (!getInSkyblock()) return;
-    if (collector === 'You') return;
-    if (ahDebug) ChatLib.chat('player collected coins from selling response');
-    const message = ChatLib.getChatMessage(event, true);
-    const regex = /(&[a-qs-z0-9])(.+?) &r&ecollected an auction for &r&6(.+) coins&r&e\!&r/;
-    let match = message.match(regex);
-    // if (match) {    
-            
-    // }        
-}).setCriteria('${collector} collected an auction for ${coins}');
 
 //! Bid message on your item
 register('chat', (player, cost, item, event) => {
@@ -245,3 +219,17 @@ register('chat', (coins, event) => {
     if (ahDebug) ChatLib.chat('refund from special auction');
     replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &7Collected &6${truncateNumbers(coins)} &7from failed shen's bid!`);  
 }).setCriteria('Escrow refunded ${coins} coins for Special Auction Claim!');
+
+//! This BIN sale is still in its grace period!
+register('chat', (event) => {
+    if (!getInSkyblock()) return;
+    if (ahDebug) ChatLib.chat('bin sale is still in its grace period');
+    replaceAuctionMessage(event, `${AH_PREFIX}GRACE PERIOD: &cBIN will be active soon!`);       
+}).setCriteria('This BIN sale is still in its grace period!');  
+
+//! escrow
+register('chat', (coins, event) => {
+    if (!getInSkyblock()) return;
+    if (ahDebug) ChatLib.chat('auction escrow response');
+        replaceAuctionMessage(event, `${AH_PREFIX}&6REFUND: &r&6${truncateNumbers(coins)} &7from &eEscrow!`);
+}).setCriteria('Escrow refunded ${coins} coins for BIN Auction Buy!');

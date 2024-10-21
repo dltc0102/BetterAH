@@ -83,9 +83,6 @@ export function createClickable(fullMessage, linkMessage) {
     )
 }   
 
-function comment(str) { return ChatLib.simulateChat(`&8${str}`); }
-function simulate(str) { return ChatLib.simulateChat(str); }
-
 export function getAuctionLinkFromEvent(event) {
     let messageParts = new Message(EventLib.getMessage(event)).getMessageParts();
     let auctionLink = messageParts[0].clickValue;
@@ -110,4 +107,9 @@ register('command', () => {
     //* You only
     console.log('&8You only')
     ChatLib.simulateChat('&r&eYou collected &r&61,000,000 coins &r&efrom selling &r&f&r&5Hyperion &r&eto &r&b[MVP&r&9+&r&b] Nquek &r&ein an auction!&r')
-}).setName('ahclaimtest');          
+}).setName('ahclaimtest');  
+
+register('command', () => {
+    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an expired auction!&r')
+    ChatLib.simulateChat('&r&eYou claimed &r&f&r&9Glowstone Gauntlet &r&eback from your expired auction!&r')
+}).setName('expired');                              
