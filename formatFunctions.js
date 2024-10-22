@@ -72,22 +72,22 @@ export function getAuctionResponse(prefix, message, type) {
 }   
 
 function formatAuctionBoughtBy(prefix, match) {
-    let [_, formattedPlayerName, formattedItemName, itemCost] = match;  
+    const [_, formattedPlayerName, formattedItemName, itemCost] = match;  
     return `${prefix}${formattedPlayerName} &7bought ${formattedItemName} &7for &6${truncateNumbers(itemCost)}`;   
 }
 
 function formatAuctionCreated(prefix, match) {
-    let [_, formattedName, formattedItem] = match;
+    const [_, formattedName, formattedItem] = match;
     return `${prefix}&eAUCTION: ${formattedName} &7listed ${formattedItem}&7!`;
 }
 
 function formatBINCreated(prefix, match) {
-    let [_, nameColor, name, formattedItem, itemCost] = match;
+    const [_, nameColor, name, formattedItem, itemCost] = match;
     return `${prefix}&eBIN: ${nameColor}${stripRank(name.removeFormatting())} &7listed ${formattedItem} &r&7for &6${truncateNumbers(itemCost)}&7!`;        
 }
 
 function formatBoughtAuction(prefix, match) {
-    let [_, formattedItemName, itemCost] = match;
+    const [_, formattedItemName, itemCost] = match;
     return {
         item: formattedItemName,
         cost: truncateNumbers(itemCost)
@@ -95,7 +95,7 @@ function formatBoughtAuction(prefix, match) {
 }
 
 function formatClaimedBought(prefix, match) {
-    let [_, formattedItemName, sellerColor, sellerName] = match;
+    const [_, formattedItemName, sellerColor, sellerName] = match;
     return {
         item: formattedItemName,
         seller: `${sellerColor}${stripRank(sellerName.removeFormatting())}`
@@ -103,32 +103,32 @@ function formatClaimedBought(prefix, match) {
 }           
 
 function getExpiredAuctionItem(prefix, match) {
-    let [_, formattedItem] = match;
+    const [_, formattedItem] = match;
     return formattedItem;
 }
 
 function getExpiredCollector(prefix, match) {
-    let [_, collectorColor, collectorName] = match;
-    let name = stripRank(collectorName.removeFormatting()).trim();
+    const [_, collectorColor, collectorName] = match;
+    const name = stripRank(collectorName.removeFormatting()).trim();
     return `${collectorColor}${name}`;
 }
 
 function formatCancelledAuction(prefix, match) {
-    let [_, collectorColor,  collectorName, formattedItemName] = match;
+    const [_, collectorColor,  collectorName, formattedItemName] = match;
     return `${prefix}&cCANCELLED: ${formattedItemName} &7by ${collectorColor}${stripRank(collectorName.removeFormatting())}`;
 }
 
 function formatAuctionBidMessage(prefix, match) {
-    let [_, bidderColor, bidderName, bidAmount, bidItem] = match;
+    const [_, bidderColor, bidderName, bidAmount, bidItem] = match;
     return `${prefix}BID: ${bidderColor}${bidderName} &7bid &6${truncateNumbers(bidAmount)} &7on ${bidItem}&7! `;
 }
 
 function formatPlayerPlacedBid(prefix, match) {
-    let [_, bidAmount, bidItem] = match;
+    const [_, bidAmount, bidItem] = match;
     return `${prefix}BID: &7You bid &6${truncateNumbers(bidAmount)} &7on ${bidItem}&7!`;
 }
 
 function formatOutBid(prefix, match) {
-    let [_, formattedName, bidAmount, bidItem] = match;
+    const [_, formattedName, bidAmount, bidItem] = match;
     return `${prefix}OUTBID: &6${truncateNumbers(bidAmount)} &7by ${formattedName} &7on ${bidItem}&7! `;
 }

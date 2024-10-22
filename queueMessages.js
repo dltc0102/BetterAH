@@ -2,7 +2,7 @@ import { stripRank, getInSkyblock, truncateNumbers, replaceAuctionMessage } from
 import { getAuctionResponse } from './formatFunctions';
 
 function getAhMessageInfo(msg) {
-    let msgType = msg.includes('You collected') ? "personal" : "coop";
+    const msgType = msg.includes('You collected') ? "personal" : "coop";
     let resultItemName, resultCollector, resultBuyer, resultCost;
     if (msgType === 'personal') {
         const playerMessageRegex = /&r&eYou collected &r&6(.+) coins &r&efrom selling &r&f&r(.+) &r&eto &r(&[a-qs-z0-9])(.+) &r&ein an auction!&r/;
@@ -98,7 +98,7 @@ register('chat', (collector, coins, event) => {
 }).setCriteria('${collector} collected an auction for ${coins}');
 
 function getExpiredInfo(msg) {
-    let msgType = msg.includes('You claimed') ? "personal" : "coop";
+    const msgType = msg.includes('You claimed') ? "personal" : "coop";
     let resultItem, resultCollector;
     if (msgType === "personal") {
         const personalRegex = /&r&eYou claimed &r&f&r(.+) &r&eback from your expired auction!&r/;
@@ -144,7 +144,7 @@ register('chat', (item, event) => {
         const attemptMatchObject = attemptExpiredMatch(message, expiredMessage);
         if (attemptMatchObject) {
             storedExpiredMessages.pop(idx);
-            let shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? ` &7by ${attemptMatchObject.collector}&7!` : '&7!';
+            const shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? ` &7by ${attemptMatchObject.collector}&7!` : '&7!';
             replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED &cEXPIRED: &r${attemptMatchObject.item}${shownCollector}`);
             return;
             // [AH] CLAIMED EXPIRED: Empty Thunder Bottle by Dompay (coop)
@@ -170,7 +170,7 @@ register('chat', (collector, event) => {
         const attemptMatchObject = attemptExpiredMatch(message, expiredMessage);
         if (attemptMatchObject) {   
             storedExpiredMessages.pop(idx);
-            let shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? ` &7by ${attemptMatchObject.collector}&7!` : '&7!';  
+            const shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? ` &7by ${attemptMatchObject.collector}&7!` : '&7!';  
             replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED &cEXPIRED: &r${attemptMatchObject.item}${shownCollector}`);
             return;
             // [AH] CLAIMED EXPIRED: Empty Thunder Bottle by Dompay (coop)

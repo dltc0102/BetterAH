@@ -4,7 +4,7 @@ export function showAlert(someTitle) {
 
 export function stripRank(name) {
     const rankNameRegex = /\[(?:MVP\+\+|MVP\+|MVP|VIP\+|VIP)\] (\S+)/;
-    let nameMatch = name.match(rankNameRegex);
+    const nameMatch = name.match(rankNameRegex);
     return nameMatch ? nameMatch[1] : name.trim();
 }
 
@@ -53,8 +53,8 @@ export function getCurrArea() {
     if (!getInSkyblock()) return;
     let rawArea = '';
     TabList.getNames().forEach(line => {
-        let fLine = line.removeFormatting();
-        let areaMatch = fLine.match(/Area: (.+)/);
+        const fLine = line.removeFormatting();
+        const areaMatch = fLine.match(/Area: (.+)/);
         if (areaMatch) rawArea = areaMatch[1];
     });
     return rawArea;
@@ -88,35 +88,7 @@ export function createClickable(fullMessage, linkMessage) {
 }   
 
 export function getAuctionLinkFromEvent(event) {
-    let messageParts = new Message(EventLib.getMessage(event)).getMessageParts();
-    let auctionLink = messageParts[0].clickValue;
+    const messageParts = new Message(EventLib.getMessage(event)).getMessageParts();
+    const auctionLink = messageParts[0].clickValue;
     return auctionLink;
 }
-
-register('command', () => {
-    //* you first
-    ChatLib.simulateChat('&r&eYou collected &r&6400,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
-    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6400,000 coins&r&e!&r')
-
-    //* player first  
-    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6600,000 coins&r&e!&r')
-    ChatLib.simulateChat('&r&eYou collected &r&6600,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
-    
-    //* player only         
-    ChatLib.simulateChat('&b[MVP&r&5++&r&b] Dompay&r&f &r&ecollected an auction for &r&61,970,100 coins&r&e!&r')
-}).setName('ahclaimtest');                          
-
-register('command', () => {
-    ChatLib.simulateChat('&r&eYou claimed &r&f&r&9Glowstone Gauntlet &r&eback from your expired auction!&r')
-    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an expired auction!&r')
-
-    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an expired auction!&r')       
-    ChatLib.simulateChat('&r&eYou claimed &r&f&r&7[Lvl 1] &r&6Zombie &r&eback from your expired auction!&r')
-
-    ChatLib.simulateChat('&6[MVP&r&c+&r&b] Dompay&r&f &r&ecollected an expired auction!&r')     
-}).setName('expired');                                 
-
-// register('command', () => {
-//     ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&63,613,500 coins&r&e!&r')
-//     ChatLib.simulateChat('&r&eYou collected &r&63,613,500 coins &r&efrom selling &r&f&r&7[Lvl 1] &r&6Zombie &r&eto &r&b[MVP&r&6+&r&b] Airz200 &r&ein an auction!&r')
-// }).setName('testzombie');           

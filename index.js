@@ -6,7 +6,7 @@ import './queueMessages.js'
     
 const ahAudio = new Audio();
 const AH_PREFIX = '&6[AH] ';  
-let moduleVersion = JSON.parse(FileLib.read("BetterAH", "metadata.json")).version;  
+const moduleVersion = JSON.parse(FileLib.read("BetterAH", "metadata.json")).version;  
 const supportLink = 'https://discord.gg/gGd6RD5Z';
 const supportClickable = new TextComponent('&c&l[REPORT ERRORS HERE]')
     .setClick('open_url', supportLink)
@@ -40,7 +40,7 @@ register('gameLoad', () => {
         ahData.firstInstall = false;
     }               
 });
-    
+
 
 register('chat', (event) => {
     if (!getInSkyblock()) return;
@@ -95,10 +95,10 @@ auctionHouseErrors.forEach(error => {
 register('chat', (playerInfo, item, cost, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
-    let messageParts = new Message(EventLib.getMessage(event)).getMessageParts();
-    let auctionLink = messageParts[0].clickValue;
-    let auctionBoughtMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBoughtBy');
-    let auctionClickable = createClickable(auctionBoughtMessage, auctionLink);
+    const messageParts = new Message(EventLib.getMessage(event)).getMessageParts();
+    const auctionLink = messageParts[0].clickValue;
+    const auctionBoughtMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBoughtBy');
+    const auctionClickable = createClickable(auctionBoughtMessage, auctionLink);
     replaceAuctionMessage(event, auctionClickable, bypass=true);
     if (ahData.sounds) ahAudio.playDingSound();    
 }).setCriteria('[Auction] ${playerInfo} bought ${item} for ${cost} coins CLICK');               
@@ -107,7 +107,7 @@ register('chat', (playerInfo, item, cost, event) => {
 register('chat', (player, item, event) => {                     
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
-    let ahMessage = getAuctionResponse(AH_PREFIX, message, 'auctionCreated');
+    const ahMessage = getAuctionResponse(AH_PREFIX, message, 'auctionCreated');
     replaceAuctionMessage(event, ahMessage); 
 }).setCriteria('${player} created an auction for ${item}!');
 
@@ -115,7 +115,7 @@ register('chat', (player, item, event) => {
 register('chat', (playerInfo, item, cost, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
-    let binMessage = getAuctionResponse(AH_PREFIX, message, 'binCreated');
+    const binMessage = getAuctionResponse(AH_PREFIX, message, 'binCreated');
     replaceAuctionMessage(event, binMessage); 
 }).setCriteria('${playerInfo} created a BIN auction for ${item} at ${cost} coins!');
 
@@ -125,7 +125,7 @@ register('chat', (playerInfo, item, cost, event) => {
 register('chat', (player, item, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
-    let cancelledMessage = getAuctionResponse(AH_PREFIX, message, 'cancelledAuction')
+    const cancelledMessage = getAuctionResponse(AH_PREFIX, message, 'cancelledAuction')
     replaceAuctionMessage(event, cancelledMessage);
 }).setCriteria('${player} cancelled an auction for ${item}!');
 
@@ -138,7 +138,7 @@ const hubObject = {
 register('chat', (item, cost, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
-    let boughtMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBought');
+    const boughtMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBought');
     if (getInHub()) {   
         hubObject.item = boughtMessage.item;
         hubObject.cost = boughtMessage.cost;
@@ -153,7 +153,7 @@ register('chat', (item, cost, event) => {
 register('chat', (item, seller, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
-    let claimedObject = getAuctionResponse(AH_PREFIX, message, 'claimBought');
+    const claimedObject = getAuctionResponse(AH_PREFIX, message, 'claimBought');
     if (getInHub() && hubObject.item === claimedObject.item) {
         hubObject.seller = claimedObject.seller;
         replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED: ${hubObject.item} &7for &6${hubObject.cost} &7from ${hubObject.seller}&7!`);
@@ -166,11 +166,11 @@ register('chat', (item, seller, event) => {
 //! Bid message on your item
 register('chat', (player, cost, item, event) => {
     if (!getInSkyblock()) return;
-    let auctionLink = getAuctionLinkFromEvent(event);
+    const auctionLink = getAuctionLinkFromEvent(event);
     const message = ChatLib.getChatMessage(event, true);
-    let auctionBidMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBid');
-    let auctionClickable = new TextComponent('&6&l[CLICK]').setClick('run_command', auctionLink);
-    let finalMessage = new Message( auctionBidMessage, auctionClickable);
+    const auctionBidMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBid');
+    const auctionClickable = new TextComponent('&6&l[CLICK]').setClick('run_command', auctionLink);
+    const finalMessage = new Message( auctionBidMessage, auctionClickable);
     replaceAuctionMessage(event, finalMessage);     
 }).setCriteria('[Auction] ${player} bid ${cost} coins on ${item} CLICK');
 
@@ -178,18 +178,18 @@ register('chat', (player, cost, item, event) => {
 register('chat', (bidAmount, bidItem, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
-    let auctionBidMessage = getAuctionResponse(AH_PREFIX, message, 'playerPlacedBid')               
+    const auctionBidMessage = getAuctionResponse(AH_PREFIX, message, 'playerPlacedBid')               
     replaceAuctionMessage(event, auctionBidMessage);
 }).setCriteria('Bid of ${bidAmount} coins placed for ${bidItem}!');
 
 //! outbid message  
 register('chat', (player, diffCoins, item, event) => {
     if (!getInSkyblock()) return;   
-    let auctionLink = getAuctionLinkFromEvent(event);        
+    const auctionLink = getAuctionLinkFromEvent(event);        
     const message = ChatLib.getChatMessage(event, true);
-    let outbidMessage = getAuctionResponse(AH_PREFIX, message, 'auctionOutBid');
-    let outbidClickable = new TextComponent("&6&l[CLICK]").setClick('run_command', auctionLink);
-    let auctionOutbidMessage = new Message( outbidMessage,  outbidClickable );
+    const outbidMessage = getAuctionResponse(AH_PREFIX, message, 'auctionOutBid');
+    const outbidClickable = new TextComponent("&6&l[CLICK]").setClick('run_command', auctionLink);
+    const auctionOutbidMessage = new Message( outbidMessage,  outbidClickable );
     replaceAuctionMessage(event, auctionOutbidMessage);
 }).setCriteria('[Auction] ${player} outbid you by ${diffCoins} coins for ${item} CLICK');      
 
