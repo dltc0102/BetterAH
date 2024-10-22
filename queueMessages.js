@@ -57,16 +57,18 @@ register('chat', (cost, item, recipient, event) => {
         const attemptMatchObject = attemptAhMessageMatch(message, storedMessage);
         if (attemptMatchObject) {   
             storedClaimedMessages.pop(idx);
-            const shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? '' : `${attemptMatchObject.collector} `;
-            replaceAuctionMessage(event, `${AH_PREFIX}${shownCollector}&6CLAIMED: ${attemptMatchObject.item} &7for &6${attemptMatchObject.cost} &7to ${attemptMatchObject.buyer}`);    
+            const shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? '&7!' : ` &7by ${attemptMatchObject.collector}&7!`;
+            replaceAuctionMessage(event, `${AH_PREFIX}&6CLAIMED: ${attemptMatchObject.item} &7for &6${attemptMatchObject.cost} &7to ${attemptMatchObject.buyer}${shownCollector}`);    
             return;         
+            // [AH] CLAIMED: Empty Thunder Bottle for 600k to Aidanqt by Dompay (coop)
+            // [AH] CLAIMED: Empty Thunder Bottle for 600k to Aidanqt (self)
         }
     }  
     storedClaimedMessages.push(message);
     cancel(event);
 }).setCriteria('You collected ${cost} coins from selling ${item} to ${recipient} in an auction!');  
 
-register('chat', (collector, coins, event) => {
+register('chat', (collector, coins, event) => { 
     if (!getInSkyblock()) return;
     if (collector === 'You') return;
     const message = ChatLib.getChatMessage(event, true);
@@ -75,6 +77,8 @@ register('chat', (collector, coins, event) => {
         const matchObject = getAhMessageInfo(message);  
         replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED: &6${matchObject.cost} &7by ${matchObject.collector}&7!`);
         return;
+        // [AH] CLAIMED: 600k by Dompay
+
     }
 
     for (let idx = 0; idx < storedClaimedMessages.length; idx++) {
@@ -82,9 +86,11 @@ register('chat', (collector, coins, event) => {
         const attemptMatchObject = attemptAhMessageMatch(message, storedMessage);
         if (attemptMatchObject) {   
             storedClaimedMessages.pop(idx);
-            const shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? '' : `${attemptMatchObject.collector} `;
-            replaceAuctionMessage(event, `${AH_PREFIX}${shownCollector}&6CLAIMED: ${attemptMatchObject.item} &7for &6${attemptMatchObject.cost} &7to ${attemptMatchObject.buyer}`);  
+            const shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? '&7!' : ` &7by ${attemptMatchObject.collector}&7!`;
+            replaceAuctionMessage(event, `${AH_PREFIX}&6CLAIMED: ${attemptMatchObject.item} &7for &6${attemptMatchObject.cost} &7to ${attemptMatchObject.buyer}${shownCollector}`);    
             return;
+            // [AH] CLAIMED: Empty Thunder Bottle for 600k to Aidanqt by Dompay
+            // [AH] CLAIMED: Empty Thunder Bottle for 600k to Aidanqt 
         }
     }   
     storedClaimedMessages.push(message);
@@ -131,15 +137,18 @@ function attemptExpiredMatch(msg1, msg2) {
 
 let storedExpiredMessages = [];
 register('chat', (item, event) => {
-    if (!getInSkyblock()) return;
+    if (!getInSkyblock()) return;``
     const message = ChatLib.getChatMessage(event, true);
     for (let idx = 0; idx < storedExpiredMessages.length; idx++) {
         let expiredMessage = storedExpiredMessages[idx];
         const attemptMatchObject = attemptExpiredMatch(message, expiredMessage);
         if (attemptMatchObject) {
             storedExpiredMessages.pop(idx);
-            replaceAuctionMessage(event, `${AH_PREFIX}${attemptMatchObject.collector} &6CLAIMED &cEXPIRED: &r${attemptMatchObject.item}&7!`);
+            let shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? ` &7by ${attemptMatchObject.collector}&7!` : '&7!';
+            replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED &cEXPIRED: &r${attemptMatchObject.item}${shownCollector}`);
             return;
+            // [AH] CLAIMED EXPIRED: Empty Thunder Bottle by Dompay (coop)
+            // [AH] CLAIMED EXPIRED: Empty Thunder Bottle (self)
         }
     }
     storedExpiredMessages.push(message);
@@ -161,8 +170,11 @@ register('chat', (collector, event) => {
         const attemptMatchObject = attemptExpiredMatch(message, expiredMessage);
         if (attemptMatchObject) {   
             storedExpiredMessages.pop(idx);
-            replaceAuctionMessage(event, `${AH_PREFIX}${attemptMatchObject.collector} &6CLAIMED &cEXPIRED: &r${attemptMatchObject.item}&7!`);
+            let shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? ` &7by ${attemptMatchObject.collector}&7!` : '&7!';  
+            replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED &cEXPIRED: &r${attemptMatchObject.item}${shownCollector}`);
             return;
+            // [AH] CLAIMED EXPIRED: Empty Thunder Bottle by Dompay (coop)
+            // [AH] CLAIMED EXPIRED: Empty Thunder Bottle (self)
         }
     }
     storedExpiredMessages.push(message);

@@ -13,7 +13,7 @@
 
 # v1.0.3
 + added firstInstall
-+ changed gameload message
-+ added error "this auction couldn't be found!"
++ changed gameload message for hoverable changelog message
++ added error formattings to ah messages
 + refactored and reformatted claim auction messages
-+ WIP: refactored and reformatted claim expired auction messages
++ refactored and reformatted claim expired auction messages

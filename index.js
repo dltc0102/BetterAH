@@ -7,7 +7,10 @@ import './queueMessages.js'
 const ahAudio = new Audio();
 const AH_PREFIX = '&6[AH] ';  
 let moduleVersion = JSON.parse(FileLib.read("BetterAH", "metadata.json")).version;  
-const ahDebug = false; 
+const supportLink = 'https://discord.gg/gGd6RD5Z';
+const supportClickable = new TextComponent('&c&l[REPORT ERRORS HERE]')
+    .setClick('open_url', supportLink)
+    .setHover('show_text', supportLink);
 
 const ahData = new PogObject("BetterAH", {
     'sounds': false,
@@ -26,21 +29,21 @@ register('command', (event) => {
 }).setName('ahsounds');         
 
 register('gameLoad', () => {    
-    let soundStatus = ahData.sounds ? '&aON' : '&cOFF';
-    ChatLib.chat(`&6[BetterAH] &7Loaded! &3[&rSounds: ${soundStatus}&3]`);
+    const soundStatus = ahData.sounds ? '&aON' : '&cOFF';
+    const ahLoadMessage = `&6[BetterAH] &7Loaded! &3[&rSounds: ${soundStatus}&3]`;
+    const ahSupportMessage = new Message(
+        `${ahLoadMessage} &r&8-- `, supportClickable
+    )
+
+    ChatLib.chat(ahSupportMessage);
     if (ahData.firstInstall) {
-        if (moduleVersion === '1.0.3') {
-            ChatLib.chat(`&e&lNEW Features: (v1.0.3)`);
-            ChatLib.chat(`o &rDo &b/ahsounds &rto turn ding sounds on/off`)
-            ChatLib.chat(`&7Note: These sounds are only available for when someone buys your auction!`)
-        }
+        ahData.firstInstall = false;
     }               
 });
-
+    
 
 register('chat', (event) => {
     if (!getInSkyblock()) return;
-    
     const message = ChatLib.getChatMessage(event, true);
     if (message == '&b-----------------------------------------------------&r') {
         cancel(event);
@@ -83,7 +86,6 @@ const auctionHouseErrors = [
 auctionHouseErrors.forEach(error => {
     register('chat', (event) => {
         if (!getInSkyblock()) return;
-        if (ahDebug) ChatLib.chat('ah error response');
         replaceAuctionMessage(event, `${AH_PREFIX}&c${error}`);                 
     }).setCriteria(error);
 });
@@ -92,7 +94,6 @@ auctionHouseErrors.forEach(error => {
 //!! item is bought by someone
 register('chat', (playerInfo, item, cost, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('item bought by player response');
     const message = ChatLib.getChatMessage(event, true);
     let messageParts = new Message(EventLib.getMessage(event)).getMessageParts();
     let auctionLink = messageParts[0].clickValue;
@@ -105,7 +106,6 @@ register('chat', (playerInfo, item, cost, event) => {
 //! created a normal auction --  
 register('chat', (player, item, event) => {                     
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('normal auction creation response');
     const message = ChatLib.getChatMessage(event, true);
     let ahMessage = getAuctionResponse(AH_PREFIX, message, 'auctionCreated');
     replaceAuctionMessage(event, ahMessage); 
@@ -114,7 +114,6 @@ register('chat', (player, item, event) => {
 //! created a bin auction -- good for coop  
 register('chat', (playerInfo, item, cost, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('bin auction creation response');
     const message = ChatLib.getChatMessage(event, true);
     let binMessage = getAuctionResponse(AH_PREFIX, message, 'binCreated');
     replaceAuctionMessage(event, binMessage); 
@@ -125,7 +124,6 @@ register('chat', (playerInfo, item, cost, event) => {
 //* player cancelled auction (bin/normal)   
 register('chat', (player, item, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('player cancelled auction response');
     const message = ChatLib.getChatMessage(event, true);
     let cancelledMessage = getAuctionResponse(AH_PREFIX, message, 'cancelledAuction')
     replaceAuctionMessage(event, cancelledMessage);
@@ -139,7 +137,6 @@ const hubObject = {
 };
 register('chat', (item, cost, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('player purchasing item response');
     const message = ChatLib.getChatMessage(event, true);
     let boughtMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBought');
     if (getInHub()) {   
@@ -155,7 +152,6 @@ register('chat', (item, cost, event) => {
 //! claiming a bought item          
 register('chat', (item, seller, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('you claimed item reponse');
     const message = ChatLib.getChatMessage(event, true);
     let claimedObject = getAuctionResponse(AH_PREFIX, message, 'claimBought');
     if (getInHub() && hubObject.item === claimedObject.item) {
@@ -170,7 +166,6 @@ register('chat', (item, seller, event) => {
 //! Bid message on your item
 register('chat', (player, cost, item, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('player bid on your item response');
     let auctionLink = getAuctionLinkFromEvent(event);
     const message = ChatLib.getChatMessage(event, true);
     let auctionBidMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBid');
@@ -182,7 +177,6 @@ register('chat', (player, cost, item, event) => {
 //! Bid message by you
 register('chat', (bidAmount, bidItem, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('you bid on item response');
     const message = ChatLib.getChatMessage(event, true);
     let auctionBidMessage = getAuctionResponse(AH_PREFIX, message, 'playerPlacedBid')               
     replaceAuctionMessage(event, auctionBidMessage);
@@ -191,7 +185,6 @@ register('chat', (bidAmount, bidItem, event) => {
 //! outbid message  
 register('chat', (player, diffCoins, item, event) => {
     if (!getInSkyblock()) return;   
-    if (ahDebug) ChatLib.chat('player outbid you for item response');
     let auctionLink = getAuctionLinkFromEvent(event);        
     const message = ChatLib.getChatMessage(event, true);
     let outbidMessage = getAuctionResponse(AH_PREFIX, message, 'auctionOutBid');
@@ -203,27 +196,23 @@ register('chat', (player, diffCoins, item, event) => {
 //! refund from not getting top bid
 register('chat', (coins, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('refund from normal auction');
     replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &a+&6${truncateNumbers(coins)} &7from failed auction bid!`);     
 }).setCriteria("You collected ${coins} coins back from an auction which you didn't hold the top bid!");
 
 //! refund from escrow for shens
 register('chat', (coins, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('refund from special auction');
     replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &7Collected &6${truncateNumbers(coins)} &7from failed shen's bid!`);  
 }).setCriteria('Escrow refunded ${coins} coins for Special Auction Claim!');
 
 //! This BIN sale is still in its grace period!
 register('chat', (event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('bin sale is still in its grace period');
     replaceAuctionMessage(event, `${AH_PREFIX}GRACE PERIOD: &cBIN will be active soon!`);       
 }).setCriteria('This BIN sale is still in its grace period!');  
 
 //! escrow
 register('chat', (coins, event) => {
     if (!getInSkyblock()) return;
-    if (ahDebug) ChatLib.chat('auction escrow response');
         replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &r&6${truncateNumbers(coins)} &7from &eEscrow!`);
 }).setCriteria('Escrow refunded ${coins} coins for BIN Auction Buy!');
