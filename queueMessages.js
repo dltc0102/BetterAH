@@ -1,5 +1,4 @@
 import { stripRank, getInSkyblock, truncateNumbers, replaceAuctionMessage } from "./functions"
-import { getAuctionResponse } from './formatFunctions';
 
 function getAhMessageInfo(msg) {
     const msgType = msg.includes('You collected') ? "personal" : "coop";
@@ -47,6 +46,8 @@ function attemptAhMessageMatch(msg1, msg2) {
     };                  
 }           
 
+const channels = ['Guild > ', 'Party > ', 'Co-op > ', 'From', 'To', 'You'];  
+const regexNormalChannels = [/^\[\d+\]/];
 const AH_PREFIX = `&6[AH] `;
 let storedClaimedMessages = [];
 register('chat', (cost, item, recipient, event) => {
@@ -70,15 +71,15 @@ register('chat', (cost, item, recipient, event) => {
 
 register('chat', (collector, coins, event) => { 
     if (!getInSkyblock()) return;
-    if (collector === 'You') return;
+    if (channels.some(channel => collector.startsWith(channel)) ||
+    regexNormalChannels.some(regex => regex.test(collector))) return;
     const message = ChatLib.getChatMessage(event, true);
     const collectorName = stripRank(collector).trim();
     if (collectorName !== Player.getName()) {   
         const matchObject = getAhMessageInfo(message);  
         replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED: &6${matchObject.cost} &7by ${matchObject.collector}&7!`);
         return;
-        // [AH] CLAIMED: 600k by Dompay
-
+        // [AH] CLAIMED: 600k by Dompay     
     }
 
     for (let idx = 0; idx < storedClaimedMessages.length; idx++) {
@@ -144,7 +145,7 @@ register('chat', (item, event) => {
         const attemptMatchObject = attemptExpiredMatch(message, expiredMessage);
         if (attemptMatchObject) {
             storedExpiredMessages.pop(idx);
-            const shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? ` &7by ${attemptMatchObject.collector}&7!` : '&7!';
+            const shownCollector = attemptMatchObject.collector.removeFormatting().trim() === Player.getName() ? ` &7by ${attemptMatchObject.collector}&7!` : '&7!';            
             replaceAuctionMessage(event, `${AH_PREFIX}CLAIMED &cEXPIRED: &r${attemptMatchObject.item}${shownCollector}`);
             return;
             // [AH] CLAIMED EXPIRED: Empty Thunder Bottle by Dompay (coop)
@@ -157,7 +158,8 @@ register('chat', (item, event) => {
 
 register('chat', (collector, event) => {
     if (!getInSkyblock()) return;
-    if (collector === 'You') return;
+    if (channels.some(channel => collector.startsWith(channel)) ||
+    regexNormalChannels.some(regex => regex.test(collector))) return;       
     const message = ChatLib.getChatMessage(event, true);
     const collectorName = stripRank(collector).trim();
     if (collectorName !== Player.getName()) {

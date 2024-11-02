@@ -1,7 +1,3 @@
-export function showAlert(someTitle) {
-    Client.showTitle(someTitle, '', 1, 30, 1);
-}
-
 export function stripRank(name) {
     const rankNameRegex = /\[(?:MVP\+\+|MVP\+|MVP|VIP\+|VIP)\] (\S+)/;
     const nameMatch = name.match(rankNameRegex);
@@ -37,28 +33,21 @@ export function truncateNumbers(amt) {
     }
 };
 
-
-export function stripRomanNumerals(name) {
-    return name
-        .replace(/I/g, '')
-        .replace(/V/g, '');
-}
-
 export function getInSkyblock() {
     if (!World.isLoaded()) return false;
     return ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK");
 }
 
-export function getCurrArea() {
-    if (!getInSkyblock()) return;
-    let rawArea = '';
-    TabList.getNames().forEach(line => {
-        const fLine = line.removeFormatting();
-        const areaMatch = fLine.match(/Area: (.+)/);
-        if (areaMatch) rawArea = areaMatch[1];
-    });
-    return rawArea;
-}
+    export function getCurrArea() {
+        if (!getInSkyblock()) return;
+        let rawArea = '';
+        TabList.getNames().forEach(line => {
+            const fLine = line.removeFormatting();
+            const areaMatch = fLine.match(/Area: (.+)/);
+            if (areaMatch) rawArea = areaMatch[1];
+        });
+        return rawArea;
+    }
 
 export function getInHub() {
     return getCurrArea() === 'Hub';
@@ -92,3 +81,26 @@ export function getAuctionLinkFromEvent(event) {
     const auctionLink = messageParts[0].clickValue;
     return auctionLink;
 }
+
+register('command', () => { 
+    //* you first
+    ChatLib.simulateChat('&r&eYou collected &r&6400,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
+    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6400,000 coins&r&e!&r')
+
+    //* player first  
+    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an auction for &r&6600,000 coins&r&e!&r')
+    ChatLib.simulateChat('&r&eYou collected &r&6600,000 coins &r&efrom selling &r&f&r&5Empty Thunder Bottle &r&eto &r&b[MVP&r&9+&r&b] XoutDragon &r&ein an auction!&r')
+    
+    //* player only         
+    ChatLib.simulateChat('&b[MVP&r&5++&r&b] Dompay&r&f &r&ecollected an auction for &r&61,970,100 coins&r&e!&r')
+}).setName('ahclaimtest');                          
+
+register('command', () => {
+    ChatLib.simulateChat('&r&eYou claimed &r&f&r&9Glowstone Gauntlet &r&eback from your expired auction!&r')
+    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an expired auction!&r')
+
+    ChatLib.simulateChat('&b[MVP&r&c+&r&b] oBiscuit&r&f &r&ecollected an expired auction!&r')       
+    ChatLib.simulateChat('&r&eYou claimed &r&f&r&7[Lvl 1] &r&6Zombie &r&eback from your expired auction!&r')
+
+    ChatLib.simulateChat('&6[MVP&r&c+&r&b] Dompay&r&f &r&ecollected an expired auction!&r')     
+}).setName('expired');  

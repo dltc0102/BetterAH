@@ -66,6 +66,7 @@ const auctionHouseMessages = [
     /You canceled your auction for .+!/,
     /Checking escrow for recent transaction\.\.\./,
     /There was an error with the auction house! \(AUCTION_EXPIRED_OR_NOT_FOUND\)/,
+    /Failed to claim bid! \(NOT_FOUND_OR_ALREADY_CLAIMED\)/,
 ];
 
 auctionHouseMessages.forEach(msg => {
@@ -95,13 +96,15 @@ auctionHouseErrors.forEach(error => {
 register('chat', (playerInfo, item, cost, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
-    const messageParts = new Message(EventLib.getMessage(event)).getMessageParts();
-    const auctionLink = messageParts[0].clickValue;
+        const messageParts = new Message(EventLib.getMessage(event)).getMessageParts();
+        const auctionLink = messageParts[0].clickValue;
     const auctionBoughtMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBoughtBy');
     const auctionClickable = createClickable(auctionBoughtMessage, auctionLink);
     replaceAuctionMessage(event, auctionClickable, bypass=true);
     if (ahData.sounds) ahAudio.playDingSound();    
-}).setCriteria('[Auction] ${playerInfo} bought ${item} for ${cost} coins CLICK');               
+}).setCriteria('[Auction] ${playerInfo} bought ${item} for ${cost} coins CLICK');   
+
+
 
 //! created a normal auction --  
 register('chat', (player, item, event) => {                     

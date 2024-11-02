@@ -17,3 +17,9 @@
 + added error formattings to ah messages
 + refactored and reformatted claim auction messages
 + refactored and reformatted claim expired auction messages
+
+# v1.0.4
++ removed unused functions
++ added formatting to error messages
++ fixed messages being formatted when auction messages are in certain channels (party, guild chat, all chat, replies etc)
+
