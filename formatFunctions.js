@@ -1,16 +1,12 @@
 import { abbreviateWords, stripRank, truncateNumbers } from './functions';
 
 function generateMessage(prefix, message, regex, formatHandler) {
-    const match = message.match(regex);
-    if (match) {
-        return formatHandler(prefix, match);    
-    } else {    
-        console.log('not matched -- ah');    
-        console.log(`matched: false`);
-        console.log(`formatHandler: ${formatHandler}`);
-        console.log(`message: ${message}`);
-        console.log(`regex: ${regex}`);
-        console.log(' ');
+    try {
+        const match = message.match(regex);
+        return formatHandler(prefix, match);
+    } catch(error) {
+        ChatLib.chat(`&4[&b!&4]&r &6[BetterAH] &cUnrecognised statement, please contact &b@biscuit#4698 `)
+        console.log(`not matched -- ah\nmatched: false\nformatHandler: ${formatHandler}\nmessage: ${message}\nregex: ${regex}\n`);
         return;
     }
 }

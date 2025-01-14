@@ -23,3 +23,8 @@
 + added formatting to error messages
 + fixed messages being formatted when auction messages are in certain channels (party, guild chat, all chat, replies etc)
 
+# v1.0.5
++ added command reminder for ah sounds (/ahsounds)
++ replaced report clickable with sound switch
++ if found unmatched errors, added report statement
+

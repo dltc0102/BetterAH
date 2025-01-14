@@ -98,6 +98,12 @@ register('chat', (collector, coins, event) => {
     cancel(event);
 }).setCriteria('${collector} collected an auction for ${coins}');
 
+
+
+
+
+
+
 function getExpiredInfo(msg) {
     const msgType = msg.includes('You claimed') ? "personal" : "coop";
     let resultItem, resultCollector;

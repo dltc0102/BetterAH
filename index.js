@@ -1,12 +1,12 @@
 import { getInSkyblock, getInHub, replaceAuctionMessage, truncateNumbers, createClickable, stripRank, getAuctionLinkFromEvent } from './functions.js';
 import { getAuctionResponse } from './formatFunctions.js';
-import Audio from './audio.js'; 
+import Audio from './audio.js';
 import PogObject from '../PogData';
 import './queueMessages.js'
-    
+
 const ahAudio = new Audio();
-const AH_PREFIX = '&6[AH] ';  
-const moduleVersion = JSON.parse(FileLib.read("BetterAH", "metadata.json")).version;  
+const AH_PREFIX = '&6[AH] ';
+const moduleVersion = JSON.parse(FileLib.read("BetterAH", "metadata.json")).version;
 const supportLink = 'https://discord.gg/gGd6RD5Z';
 const supportClickable = new TextComponent('&c&l[REPORT ERRORS HERE]')
     .setClick('open_url', supportLink)
@@ -18,6 +18,10 @@ const ahData = new PogObject("BetterAH", {
 })
 ahData.autosave(5);
 
+const soundCommandClickable = new TextComponent(`&8[&r&e&lTURN SOUNDS &r${ahData.sounds ? '&c&lOFF&r' : '&a&lON&r'}&8]`)
+.setClick('run_command', '/ahsounds')
+.setHover('show_text', '/ahsounds');
+
 register('command', (event) => {
     if (!ahData.sounds) {
         ahData.sounds = true;
@@ -26,19 +30,19 @@ register('command', (event) => {
         ahData.sounds = false;
         ChatLib.chat(`&6[BetterAH] &rSounds: &cOFF`);
     }
-}).setName('ahsounds');         
+}).setName('ahsounds');
 
-register('gameLoad', () => {    
+register('gameLoad', () => {
     const soundStatus = ahData.sounds ? '&aON' : '&cOFF';
     const ahLoadMessage = `&6[BetterAH] &7Loaded! &3[&rSounds: ${soundStatus}&3]`;
     const ahSupportMessage = new Message(
-        `${ahLoadMessage} &r&8-- `, supportClickable
+        `${ahLoadMessage} &r&8-- `, soundCommandClickable
     )
 
     ChatLib.chat(ahSupportMessage);
     if (ahData.firstInstall) {
         ahData.firstInstall = false;
-    }               
+    }
 });
 
 
@@ -70,14 +74,14 @@ const auctionHouseMessages = [
 ];
 
 auctionHouseMessages.forEach(msg => {
-    register('chat', (event) => {   
+    register('chat', (event) => {
         if (!getInSkyblock()) return;
         cancel(event);
     }).setCriteria(msg).setContains();
 });
 
 //! auction house error messages
-const auctionHouseErrors = [    
+const auctionHouseErrors = [
     "Couldn't read this number!",
     "Minimum duration is 5 minutes!",
     "You already have the highest bid on this auction!",
@@ -87,10 +91,10 @@ const auctionHouseErrors = [
 auctionHouseErrors.forEach(error => {
     register('chat', (event) => {
         if (!getInSkyblock()) return;
-        replaceAuctionMessage(event, `${AH_PREFIX}&c${error}`);                 
+        replaceAuctionMessage(event, `${AH_PREFIX}&c${error}`);
     }).setCriteria(error);
 });
-        
+
 
 //!! item is bought by someone
 register('chat', (playerInfo, item, cost, event) => {
@@ -101,30 +105,30 @@ register('chat', (playerInfo, item, cost, event) => {
     const auctionBoughtMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBoughtBy');
     const auctionClickable = createClickable(auctionBoughtMessage, auctionLink);
     replaceAuctionMessage(event, auctionClickable, bypass=true);
-    if (ahData.sounds) ahAudio.playDingSound();    
-}).setCriteria('[Auction] ${playerInfo} bought ${item} for ${cost} coins CLICK');   
+    if (ahData.sounds) ahAudio.playDingSound();
+}).setCriteria('[Auction] ${playerInfo} bought ${item} for ${cost} coins CLICK');
 
 
 
-//! created a normal auction --  
-register('chat', (player, item, event) => {                     
+//! created a normal auction --
+register('chat', (player, item, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
     const ahMessage = getAuctionResponse(AH_PREFIX, message, 'auctionCreated');
-    replaceAuctionMessage(event, ahMessage); 
+    replaceAuctionMessage(event, ahMessage);
 }).setCriteria('${player} created an auction for ${item}!');
 
-//! created a bin auction -- good for coop  
+//! created a bin auction -- good for coop
 register('chat', (playerInfo, item, cost, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
     const binMessage = getAuctionResponse(AH_PREFIX, message, 'binCreated');
-    replaceAuctionMessage(event, binMessage); 
+    replaceAuctionMessage(event, binMessage);
 }).setCriteria('${playerInfo} created a BIN auction for ${item} at ${cost} coins!');
 
 //! Cancelling Auctions
 //* you canceled auction (bin/normal) -- hide
-//* player cancelled auction (bin/normal)   
+//* player cancelled auction (bin/normal)
 register('chat', (player, item, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
@@ -142,7 +146,7 @@ register('chat', (item, cost, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
     const boughtMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBought');
-    if (getInHub()) {   
+    if (getInHub()) {
         hubObject.item = boughtMessage.item;
         hubObject.cost = boughtMessage.cost;
         cancel(event);
@@ -152,7 +156,7 @@ register('chat', (item, cost, event) => {
     }
 }).setCriteria('You purchased ${item} for ${cost} coins!');
 
-//! claiming a bought item          
+//! claiming a bought item
 register('chat', (item, seller, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
@@ -174,45 +178,45 @@ register('chat', (player, cost, item, event) => {
     const auctionBidMessage = getAuctionResponse(AH_PREFIX, message, 'auctionBid');
     const auctionClickable = new TextComponent('&6&l[CLICK]').setClick('run_command', auctionLink);
     const finalMessage = new Message( auctionBidMessage, auctionClickable);
-    replaceAuctionMessage(event, finalMessage);     
+    replaceAuctionMessage(event, finalMessage);
 }).setCriteria('[Auction] ${player} bid ${cost} coins on ${item} CLICK');
 
 //! Bid message by you
 register('chat', (bidAmount, bidItem, event) => {
     if (!getInSkyblock()) return;
     const message = ChatLib.getChatMessage(event, true);
-    const auctionBidMessage = getAuctionResponse(AH_PREFIX, message, 'playerPlacedBid')               
+    const auctionBidMessage = getAuctionResponse(AH_PREFIX, message, 'playerPlacedBid')
     replaceAuctionMessage(event, auctionBidMessage);
 }).setCriteria('Bid of ${bidAmount} coins placed for ${bidItem}!');
 
-//! outbid message  
+//! outbid message
 register('chat', (player, diffCoins, item, event) => {
-    if (!getInSkyblock()) return;   
-    const auctionLink = getAuctionLinkFromEvent(event);        
+    if (!getInSkyblock()) return;
+    const auctionLink = getAuctionLinkFromEvent(event);
     const message = ChatLib.getChatMessage(event, true);
     const outbidMessage = getAuctionResponse(AH_PREFIX, message, 'auctionOutBid');
     const outbidClickable = new TextComponent("&6&l[CLICK]").setClick('run_command', auctionLink);
     const auctionOutbidMessage = new Message( outbidMessage,  outbidClickable );
     replaceAuctionMessage(event, auctionOutbidMessage);
-}).setCriteria('[Auction] ${player} outbid you by ${diffCoins} coins for ${item} CLICK');      
+}).setCriteria('[Auction] ${player} outbid you by ${diffCoins} coins for ${item} CLICK');
 
 //! refund from not getting top bid
 register('chat', (coins, event) => {
     if (!getInSkyblock()) return;
-    replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &a+&6${truncateNumbers(coins)} &7from failed auction bid!`);     
+    replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &a+&6${truncateNumbers(coins)} &7from failed auction bid!`);
 }).setCriteria("You collected ${coins} coins back from an auction which you didn't hold the top bid!");
 
 //! refund from escrow for shens
 register('chat', (coins, event) => {
     if (!getInSkyblock()) return;
-    replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &7Collected &6${truncateNumbers(coins)} &7from failed shen's bid!`);  
+    replaceAuctionMessage(event, `${AH_PREFIX}&cREFUND: &7Collected &6${truncateNumbers(coins)} &7from failed shen's bid!`);
 }).setCriteria('Escrow refunded ${coins} coins for Special Auction Claim!');
 
 //! This BIN sale is still in its grace period!
 register('chat', (event) => {
     if (!getInSkyblock()) return;
-    replaceAuctionMessage(event, `${AH_PREFIX}GRACE PERIOD: &cBIN will be active soon!`);       
-}).setCriteria('This BIN sale is still in its grace period!');  
+    replaceAuctionMessage(event, `${AH_PREFIX}GRACE PERIOD: &cBIN will be active soon!`);
+}).setCriteria('This BIN sale is still in its grace period!');
 
 //! escrow
 register('chat', (coins, event) => {
