@@ -25,15 +25,15 @@ const soundCommandClickable = new TextComponent(`&8[&r&e&lTURN SOUNDS &r${ahData
 register('command', (event) => {
     if (!ahData.sounds) {
         ahData.sounds = true;
-        ChatLib.chat(`&6[BetterAH] &rSounds: &aON`);
+        ChatLib.chat(`&6[BetterAH] &rSounds: &a&lON&r`);
     } else if (ahData.sounds) {
         ahData.sounds = false;
-        ChatLib.chat(`&6[BetterAH] &rSounds: &cOFF`);
+        ChatLib.chat(`&6[BetterAH] &rSounds: &c&lOFF&r`);
     }
 }).setName('ahsounds');
 
 register('gameLoad', () => {
-    const soundStatus = ahData.sounds ? '&aON' : '&cOFF';
+    const soundStatus = ahData.sounds ? '&a&lON&r' : '&c&lOFF&r';
     const ahLoadMessage = `&6[BetterAH] &7Loaded! &3[&rSounds: ${soundStatus}&3]`;
     const ahSupportMessage = new Message(
         `${ahLoadMessage} &r&8-- `, soundCommandClickable
