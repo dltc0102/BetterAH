@@ -6,8 +6,8 @@ function generateMessage(prefix, message, regex, formatHandler) {
         return formatHandler(prefix, match);
     } catch(error) {
         ChatLib.chat(`&4[&b!&4]&r &6[BetterAH] &cUnrecognised statement, please contact &b@biscuit#4698 `)
-        console.log(`not matched -- ah\nmatched: false\nformatHandler: ${formatHandler}\nmessage: ${message}\nregex: ${regex}\n`);
-        return;
+        console.error(`not matched -- ah\nmatched: false\nerror: ${error}\nformatHandler: ${formatHandler}\nmessage: ${message}\nregex: ${regex}\n`);
+        return;         
     }
 }
 
@@ -57,7 +57,7 @@ export function getAuctionResponse(prefix, message, type) {
             regex: /&r&eBid of &r&6(.+) coins &r&eplaced for &r&f&r&f&r(.+)&r&e!&r/,
             format: formatPlayerPlacedBid
         },
-        auctionOutBid: {                        
+        auctionOutBid: {
             regex: /&6\[Auction\] (.+) &eoutbid you by &6(.+) coins &efor (.+) &e&lCLICK&r/,
             format: formatOutBid
         },
@@ -65,11 +65,11 @@ export function getAuctionResponse(prefix, message, type) {
 
     const { regex, format } = patterns[type];
     return generateMessage(prefix, message, regex, format);
-}   
+}
 
 function formatAuctionBoughtBy(prefix, match) {
-    const [_, formattedPlayerName, formattedItemName, itemCost] = match;  
-    return `${prefix}${formattedPlayerName} &7bought ${formattedItemName} &7for &6${truncateNumbers(itemCost)}`;   
+    const [_, formattedPlayerName, formattedItemName, itemCost] = match;
+    return `${prefix}${formattedPlayerName} &7bought ${formattedItemName} &7for &6${truncateNumbers(itemCost)}`;
 }
 
 function formatAuctionCreated(prefix, match) {
@@ -79,7 +79,7 @@ function formatAuctionCreated(prefix, match) {
 
 function formatBINCreated(prefix, match) {
     const [_, nameColor, name, formattedItem, itemCost] = match;
-    return `${prefix}&eBIN: ${nameColor}${stripRank(name.removeFormatting())} &7listed ${formattedItem} &r&7for &6${truncateNumbers(itemCost)}&7!`;        
+    return `${prefix}&eBIN: ${nameColor}${stripRank(name.removeFormatting())} &7listed ${formattedItem} &r&7for &6${truncateNumbers(itemCost)}&7!`;
 }
 
 function formatBoughtAuction(prefix, match) {
@@ -96,7 +96,7 @@ function formatClaimedBought(prefix, match) {
         item: formattedItemName,
         seller: `${sellerColor}${stripRank(sellerName.removeFormatting())}`
     };
-}           
+}
 
 function getExpiredAuctionItem(prefix, match) {
     const [_, formattedItem] = match;

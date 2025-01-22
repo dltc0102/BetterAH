@@ -81,3 +81,13 @@ export function getAuctionLinkFromEvent(event) {
     const auctionLink = messageParts[0].clickValue;
     return auctionLink;
 };
+
+export function isValidChannel(e) {
+    const message = ChatLib.getChatMessage(e, true);
+    const channels = ['Guild > ', 'Party > ', 'Co-op > ', 'From', 'To', 'You'];  
+    const regexNormalChannels = [/^\[\d+\]/];
+    return (
+        channels.some(channel => message.startsWith(channel)) ||
+        regexNormalChannels.some(regex => regex.test(message))
+    );
+};
